@@ -4,3 +4,9 @@
 - [Python réseau socket](https://python.doctor/page-reseaux-sockets-python-port)
 - [support](https://github.com/nos111/SMTP/blob/master/SMTP.py)
 - [Socket Programming in Python (Guide)](https://realpython.com/python-sockets)
+
+
+
+
+
+jobs -> threads , connection -> taks 
