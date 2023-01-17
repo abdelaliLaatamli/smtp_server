@@ -1,38 +1,42 @@
 import socket
+import os
+from _thread import *
+from concurrent.futures import ThreadPoolExecutor
 
+ServerSideSocket = socket.socket()
+host = '127.0.0.1'
+port = 2004
+ThreadCount = 0
+executor = ThreadPoolExecutor(3)
+# pool = multiprocessing.Pool.ThreadPool(processes=3)
 
-def server_program():
-    # get the hostname
-    # host = socket.gethostname()
-    host = "127.0.0.1"
-    print( host )
-    port = 5000  # initiate port no above 1024
+try:
+    ServerSideSocket.bind((host, port))
+except socket.error as e:
+    print(str(e))
+print('Socket is listening..')
+ServerSideSocket.listen(5)
+def multi_threaded_client(connection , address):
 
-    server_socket = socket.socket()  # get instance
-    # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, port))  # bind host address and port together
-
-    # configure how many client the server can listen simultaneously
-    server_socket.listen(1520)
-    conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))
-    conn.send("220 , wellcome\r\n".encode())
+    connection.send(str.encode('Server is working:\r\n'))
     while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        #print( [ data , data.rstrip() == 'exit' ] )
-        if data.rstrip() == 'exit' :
-            conn.send("bye".encode())
+        data = connection.recv(2048)
+        response = 'Server message: ' + data.decode('utf-8')
+        if not data:
             break
-        # if not data:
-        #     # if data is not received break
-        #     break
-        print("from connected user: " + str(data))
-        data = input(' -> ')
-        conn.send(f"{data}\r\n".encode())  # send data to the client
+        if data.decode().rstrip() == 'quit' :
+              connection.sendall("bye".encode())
+              break
+        connection.sendall(str.encode(response))
+    connection.close()
+while True:
+    client, address = ServerSideSocket.accept()
+    print('Connected to: ' + address[0] + ':' + str(address[1]))
+    # multi_threaded_client(client, address )
+    start_new_thread(multi_threaded_client, ( client, address ))
+    # executor.submit( multi_threaded_client , ( client, address ) )
+    #ThreadCount += 1
+    print('Thread Number: ' + str(ThreadCount))
+    
 
-    conn.close()  # close the connection
-
-
-if __name__ == '__main__':
-    server_program()
+ServerSideSocket.close()
