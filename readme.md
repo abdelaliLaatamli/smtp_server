@@ -10,3 +10,6 @@
 
 
 jobs -> threads , connection -> taks 
+
+TIMEOUT=10; telnet 
+open 127.0.0.1 5000
