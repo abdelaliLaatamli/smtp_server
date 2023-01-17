@@ -4,6 +4,7 @@
 - [Python réseau socket](https://python.doctor/page-reseaux-sockets-python-port)
 - [support](https://github.com/nos111/SMTP/blob/master/SMTP.py)
 - [Socket Programming in Python (Guide)](https://realpython.com/python-sockets)
+- [Simple Mail Transfer Protocol](https://www.rfc-editor.org/rfc/rfc5321)
 
 
 

@@ -1,22 +1,27 @@
 
 import socket
+import threading 
+# import SMTPConnection
+from SMTPConnection import SMTPConnection
 
 class ServerSMTP:
 
-    _host:string="0.0.0.0"
+    _host:str="0.0.0.0"
     _port:int=25
     _server_socket:socket=None
+    _threads=[]
 
     def __init__( self, host , port) -> None:
         self._host = host
         self._port = port
-        self._server_socket = socket.socket()
+        self._server_socket:socket.socket = socket.socket()
 
 
     def start(self):
 
         try:
             self._server_socket.bind((self._host, self._port))
+            print(f"Server SMTP is STARTED in {self._host}:{self._port}")
         except socket.error as e:
             raise Exception( f"Can't connect to this ip port couse of {str(e)}")
 
@@ -25,52 +30,27 @@ class ServerSMTP:
 
         while True:
             client, address = self._server_socket.accept()
-            # print('Connected to: ' + address[0] + ':' + str(address[1]))
-            # multi_threaded_client(client, address )
-            # start_new_thread(multi_threaded_client, ( client, address ))
-            # executor.submit( multi_threaded_client , ( client, address ) )
-            #ThreadCount += 1
-            # print('Thread Number: ' + str(ThreadCount))
+            print('Connected to: ' + address[0] + ':' + str(address[1]))
+            # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
+            # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
+            threading.Thread( target= SMTPConnection(client , address).start_connection  ).start()
 
-# import socket
-# import os
-# from _thread import *
-# from concurrent.futures import ThreadPoolExecutor
-
-# ServerSideSocket = socket.socket()
-# host = '127.0.0.1'
-# port = 2004
-# ThreadCount = 0
-# executor = ThreadPoolExecutor(3)
-# # pool = multiprocessing.Pool.ThreadPool(processes=3)
-
-# try:
-#     ServerSideSocket.bind((host, port))
-# except socket.error as e:
-#     print(str(e))
-# print('Socket is listening..')
-# ServerSideSocket.listen(5)
-# def multi_threaded_client(connection , address):
-
-#     connection.send(str.encode('Server is working:\r\n'))
-#     while True:
-#         data = connection.recv(2048)
-#         response = 'Server message: ' + data.decode('utf-8')
-#         if not data:
-#             break
-#         if data.decode().rstrip() == 'quit' :
-#               connection.sendall("bye".encode())
-#               break
-#         connection.sendall(str.encode(response))
-#     connection.close()
-# while True:
-#     client, address = ServerSideSocket.accept()
-#     print('Connected to: ' + address[0] + ':' + str(address[1]))
-#     # multi_threaded_client(client, address )
-#     start_new_thread(multi_threaded_client, ( client, address ))
-#     # executor.submit( multi_threaded_client , ( client, address ) )
-#     #ThreadCount += 1
-#     print('Thread Number: ' + str(ThreadCount))
     
-
-# ServerSideSocket.close()
+    def multi_threaded_client(self , connection , address):
+        smtp = SMTPConnection(connection , address)
+        smtp.start_connection()
+        # connection.send(str.encode('Server is working:\r\n'))
+        # while True:
+        #     data = connection.recv(2048)
+        #     response = 'Server message: ' + data.decode('utf-8')
+        #     if not data:
+        #         break
+        #     if data.decode().rstrip() == 'quit' :
+        #         connection.sendall("bye".encode())
+        #         break
+        #     connection.sendall(str.encode(response))
+        # connection.close()
+    
+    def stop(self):
+        if self._server_socket != None:
+            self._server_socket.close()
