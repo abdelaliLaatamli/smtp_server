@@ -30,26 +30,11 @@ class ServerSMTP:
         while True:
             client, address = self._server_socket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
-            # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
-            thread = threading.Thread( target= SMTPConnection( client , address , self ).start_connection )
+            thread = threading.Thread( target= SMTPConnection( client , address ).start_connection )
             ConnectionQueue().addConnectionthread(thread)
+        
+        print("server finished")
 
-
-    
-    # def multi_threaded_client(self , connection , address):
-    #     smtp = SMTPConnection(connection , address)
-    #     smtp.start_connection()
-        # connection.send(str.encode('Server is working:\r\n'))
-        # while True:
-        #     data = connection.recv(2048)
-        #     response = 'Server message: ' + data.decode('utf-8')
-        #     if not data:
-        #         break
-        #     if data.decode().rstrip() == 'quit' :
-        #         connection.sendall("bye".encode())
-        #         break
-        #     connection.sendall(str.encode(response))
-        # connection.close()
     
     def stop(self):
         if self._server_socket != None:

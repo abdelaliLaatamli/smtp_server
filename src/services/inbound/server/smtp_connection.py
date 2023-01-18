@@ -5,13 +5,11 @@ from .connection_queue import ConnectionQueue
 class SMTPConnection:
 
     _connection:socket=None
-    _server_smtp:any=None
     _address=None
 
-    def __init__(self , connection:socket , address , server_smtp ):
+    def __init__(self , connection:socket , address ):
         self._connection = connection
         self._address = address
-        self._server_smtp = server_smtp
 
     def start_connection(self):
         self._connection.send(str.encode('Server is working:\r\n'))
@@ -28,7 +26,4 @@ class SMTPConnection:
         
         print(f"current thread {threading.current_thread().ident} is closing ....")
         ConnectionQueue().dequeue_connection(threading.current_thread().ident)
-        self._connection.close()
-        # print( len(self._server_smtp.threads) )
-        # self._server_smtp.threads.pop(threading.current_thread().ident)
-        # print( len(self._server_smtp.threads) )
+        self._connection.close() 

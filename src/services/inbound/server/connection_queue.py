@@ -6,8 +6,8 @@ from threading import Thread
 class ConnectionQueue(metaclass=SingletonMeta):
     
     __connectionthreads={}
-    __queueConnections=queue.Queue(2000)
-    __server_qouta = 2000
+    __server_qouta = 2
+    __queueConnections=queue.Queue(__server_qouta)
 
 
     def addConnectionthread( self , connection_thread:Thread ):
@@ -30,7 +30,6 @@ class ConnectionQueue(metaclass=SingletonMeta):
             queued_connection_thread = self.__queueConnections.get()
             queued_connection_thread.start()
             self.__connectionthreads[queued_connection_thread.ident] = queued_connection_thread
-        print( len(self.__connectionthreads) )
 
             
 
