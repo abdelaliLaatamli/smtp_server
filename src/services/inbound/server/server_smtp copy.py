@@ -1,15 +1,14 @@
 
 import socket
 import threading 
-# import SMTPConnection
-from SMTPConnection import SMTPConnection
+from .smtp_connection import SMTPConnection
 
 class ServerSMTP:
 
     _host:str="0.0.0.0"
     _port:int=25
     _server_socket:socket=None
-    _threads=[]
+    threads={}
 
     def __init__( self, host , port) -> None:
         self._host = host
@@ -32,8 +31,12 @@ class ServerSMTP:
             client, address = self._server_socket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
             # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
-            # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
-            threading.Thread( target= SMTPConnection(client , address).start_connection  ).start()
+            thread = threading.Thread( target= SMTPConnection( client , address , self ).start_connection )
+            if( len(self.threads) < 2 ):
+                thread.start()
+                self.threads[thread.ident] = thread
+                # self.threads.append()
+            print(thread.ident , thread )
 
     
     def multi_threaded_client(self , connection , address):

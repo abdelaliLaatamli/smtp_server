@@ -33,9 +33,9 @@ while True:
     client, address = ServerSideSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
     # multi_threaded_client(client, address )
-    start_new_thread(multi_threaded_client, ( client, address ))
-    # executor.submit( multi_threaded_client , ( client, address ) )
-    #ThreadCount += 1
+    # start_new_thread(multi_threaded_client, ( client, address ))
+    executor.submit( multi_threaded_client , ( client, address ) )
+    ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
     
 

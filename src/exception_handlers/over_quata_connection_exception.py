@@ -1,0 +1,2 @@
+class OverQuataEonnectionException(Exception):
+    pass
