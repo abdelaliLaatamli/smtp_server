@@ -11,12 +11,15 @@ class ConnectionQueue(metaclass=SingletonMeta):
 
 
     def addConnectionthread( self , connection_thread:Thread ):
+       
         if( len( self.__connectionthreads ) < self.__server_qouta ):
             connection_thread.start()
             self.__connectionthreads[connection_thread.ident] = connection_thread
+            return
 
         if( self.__queueConnections.qsize() < self.__server_qouta ):
             self.__queueConnections.put( connection_thread )
+            return
 
         raise OverQuataEonnectionException(" The service connection is full , try later please")
 
@@ -27,6 +30,7 @@ class ConnectionQueue(metaclass=SingletonMeta):
             queued_connection_thread = self.__queueConnections.get()
             queued_connection_thread.start()
             self.__connectionthreads[queued_connection_thread.ident] = queued_connection_thread
+        print( len(self.__connectionthreads) )
 
             
 

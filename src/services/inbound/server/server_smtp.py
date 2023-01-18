@@ -32,7 +32,7 @@ class ServerSMTP:
             print('Connected to: ' + address[0] + ':' + str(address[1]))
             # threading.Thread( target= self.multi_threaded_client , args=( client, address ) ).start()
             thread = threading.Thread( target= SMTPConnection( client , address , self ).start_connection )
-            ConnectionQueue.addConnectionthread(thread)
+            ConnectionQueue().addConnectionthread(thread)
 
 
     

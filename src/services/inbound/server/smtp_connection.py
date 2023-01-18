@@ -1,5 +1,6 @@
 import socket
 import threading
+from .connection_queue import ConnectionQueue
 
 class SMTPConnection:
 
@@ -19,12 +20,15 @@ class SMTPConnection:
             response = 'Server message: ' + data.decode('utf-8')
             if not data:
                 break
-            if data.decode().rstrip() == 'quit' :
+            if data.decode().rstrip() == 'quit' or data.decode().rstrip() == 'q':
                 self._connection.sendall("bye".encode())
                 break
             self._connection.sendall(str.encode(response))
+        
+        
         print(f"current thread {threading.current_thread().ident} is closing ....")
+        ConnectionQueue().dequeue_connection(threading.current_thread().ident)
         self._connection.close()
-        print( len(self._server_smtp.threads) )
-        self._server_smtp.threads.pop(threading.current_thread().ident)
-        print( len(self._server_smtp.threads) )
+        # print( len(self._server_smtp.threads) )
+        # self._server_smtp.threads.pop(threading.current_thread().ident)
+        # print( len(self._server_smtp.threads) )
