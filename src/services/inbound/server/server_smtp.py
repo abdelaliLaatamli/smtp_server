@@ -3,6 +3,7 @@ import socket
 import threading 
 from .smtp_connection import SMTPConnection
 from .connection_queue import ConnectionQueue
+from exception_handlers import OverQuataEonnectionException
 
 class ServerSMTP:
 
@@ -13,8 +14,8 @@ class ServerSMTP:
     def __init__( self, host , port) -> None:
         self._host = host
         self._port = port
-        self._server_socket:socket.socket = socket.socket()
-
+        self._server_socket:socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def start(self):
 
@@ -31,8 +32,13 @@ class ServerSMTP:
             client, address = self._server_socket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
             thread = threading.Thread( target= SMTPConnection( client , address ).start_connection )
-            ConnectionQueue().addConnectionthread(thread)
-        
+            try :
+                ConnectionQueue().addConnectionthread(thread)
+            except OverQuataEonnectionException as e :
+                error_message = str(e)
+                client.sendall( error_message.encode() )
+                client.close()
+
         print("server finished")
 
     

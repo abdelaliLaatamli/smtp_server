@@ -21,7 +21,7 @@ class ConnectionQueue(metaclass=SingletonMeta):
             self.__queueConnections.put( connection_thread )
             return
 
-        raise OverQuataEonnectionException(" The service connection is full , try later please")
+        raise OverQuataEonnectionException("The service connection is full , try later please \r\n")
 
 
     def dequeue_connection( self , connection_thread_pid:int):
